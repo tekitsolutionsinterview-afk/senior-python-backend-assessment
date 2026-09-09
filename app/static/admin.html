@@ -1,0 +1,100 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Senior Python Assessment Admin</title>
+<style>
+body{font-family:Inter,Arial,sans-serif;max-width:1250px;margin:30px auto;background:#f5f7fa;color:#17202a;padding:0 15px}
+.card{background:#fff;padding:22px;border-radius:12px;margin:15px 0;box-shadow:0 2px 10px #0001}
+input,button{padding:10px;border-radius:7px;border:1px solid #cbd5e1}button{background:#2563eb;color:#fff;border:0;font-weight:bold;cursor:pointer}
+table{width:100%;border-collapse:collapse}td,th{padding:10px;border-bottom:1px solid #ddd;text-align:left;vertical-align:top}
+.link{word-break:break-all}.score{font-size:24px;font-weight:800}.pill{display:inline-block;padding:4px 8px;border-radius:999px;background:#eef2ff;margin:2px}
+.weak{background:#fee2e2}.good{background:#dcfce7}.muted{color:#64748b}.bar{height:8px;background:#e5e7eb;border-radius:10px;overflow:hidden}.fill{height:100%;background:#2563eb}
+.detail{display:none;margin-top:12px;padding:15px;background:#f8fafc;border-radius:10px}
+</style></head>
+<body>
+<h1>Senior Python Backend Assessment — Admin</h1>
+<div class=card><h2>Create Candidate Link</h2>
+<input id=name placeholder="Candidate full name" style="width:60%"><button id="generateBtn" onclick="create()">Generate Link</button>
+<div id=out class=link></div>
+<div id=creds style="display:none;background:#ecfdf5;border:1px solid #a7f3d0;padding:15px;border-radius:9px;margin-top:10px">
+<b>Candidate Credentials</b><br><br>
+Login ID: <code id=cid></code><br>
+Password: <code id=cpw></code><br>
+Assessment Link: <code id=clink class=link></code>
+</div>
+<p class=muted>45 minutes · 100 points · 20 difficult technical questions + live coding</p></div>
+<div class=card><h2>Candidate Feedback & Results</h2><button onclick=load()>Refresh</button>
+<table><thead><tr><th>Candidate / Login ID</th><th>Score / 100</th><th>Recommendation</th><th>Weak Areas</th><th>Proctoring</th><th>Details</th></tr></thead>
+<tbody id=rows></tbody></table></div>
+<script>
+const MAX={python:20,api:15,framework:15,sql:15,distributed:15,design:10,coding:10};
+const NAMES={python:'Python Internals & Concurrency',api:'API Architecture & Security',framework:'Django / FastAPI',sql:'Advanced SQL / Database',distributed:'Distributed Systems',design:'Senior System Design',coding:'Live Coding'};
+function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function rec(score){return score>=90?'Strong Hire':score>=80?'Hire':score>=70?'Consider / Technical Discussion':score>=60?'Weak':'Reject'}
+function scoreClass(v,m){return v/m>=.7?'good':v/m<.6?'weak':''}
+async function create(){
+ const nameEl=document.getElementById('name');
+ const btn=document.getElementById('generateBtn');
+ const out=document.getElementById('out');
+ const creds=document.getElementById('creds');
+ const n=nameEl.value.trim();
+ if(!n){ alert('Enter candidate name'); nameEl.focus(); return; }
+
+ btn.disabled=true;
+ btn.textContent='Generating...';
+ out.textContent='Creating candidate credentials...';
+ try{
+   if(window.location.protocol === 'file:'){
+     throw new Error('Admin page was opened directly as a file. Start the FastAPI server and open http://127.0.0.1:8000/ instead.');
+   }
+   const r=await fetch('/api/admin/create',{
+     method:'POST',
+     headers:{'Content-Type':'application/json','Accept':'application/json'},
+     body:JSON.stringify({candidate:n})
+   });
+   const raw=await r.text();
+   let x={};
+   try{x=JSON.parse(raw)}catch(e){}
+   if(!r.ok) throw new Error(x.detail || raw || ('Server returned HTTP '+r.status));
+   if(!x.token || !x.login_id || !x.password || !x.link)
+      throw new Error('The server returned incomplete candidate credentials.');
+
+   const fullLink=new URL(x.link,window.location.origin).href;
+   out.innerHTML=`<b>Assessment created successfully.</b><br>Link: <a href="${esc(fullLink)}" target="_blank" rel="noopener">${esc(fullLink)}</a>`;
+   creds.style.display='block';
+   document.getElementById('cid').textContent=x.login_id;
+   document.getElementById('cpw').textContent=x.password;
+   document.getElementById('clink').textContent=fullLink;
+   await load();
+ }catch(err){
+   out.innerHTML=`<span style="color:#b91c1c"><b>Could not generate link:</b> ${esc(err.message)}</span>`;
+ }finally{
+   btn.disabled=false;
+   btn.textContent='Generate Link';
+ }
+}
+async function load(){
+ try{
+   if(window.location.protocol === 'file:') return;
+   const r=await fetch('/api/admin/sessions');
+   if(!r.ok) throw new Error('Server returned HTTP '+r.status);
+   const a=await r.json();
+   document.getElementById('rows').innerHTML=a.map((x,i)=>{
+   const sec=JSON.parse(x.section_scores||'{}'); const ev=JSON.parse(x.events||'[]'); let fb={}; try{fb=JSON.parse(x.feedback||'{}')}catch{}
+   const weak=Object.entries(MAX).filter(([k,m])=>(sec[k]??0)<m*.6).sort((a,b)=>(sec[a[0]]??0)-(sec[b[0]]??0));
+   return `<tr>
+   <td><b>${esc(x.candidate)}</b><br><span class=muted>Login: ${esc(x.login_id||'—')}<br>${esc(x.submitted_at||'Not submitted')}</span></td>
+   <td><span class=score>${x.score||0}</span><br>${rec(Number(x.score||0))}</td>
+   <td><b>${esc(fb.level||rec(Number(x.score||0)))}</b><br><span class=muted>${esc(fb.message||'Preliminary feedback')}</span></td>
+   <td>${weak.length?weak.map(([k,m])=>`<span class="pill weak">${NAMES[k]}: ${sec[k]??0}/${m}</span>`).join('<br>'):'<span class="pill good">No major weak section</span>'}</td>
+   <td>${ev.length} events<br><span class=muted>${esc(x.time_taken_seconds||0)} sec</span></td>
+   <td><button onclick="toggle('d${i}')">View breakdown</button>
+   <div id=d${i} class=detail>${Object.entries(MAX).map(([k,m])=>{let v=Number(sec[k]||0);return `<p><b>${NAMES[k]}</b> — ${v}/${m}</p><div class=bar><div class=fill style="width:${Math.min(100,v/m*100)}%"></div></div>`}).join('')}<hr><b>Feedback:</b><p>${esc(fb.message||'')}</p></div></td>
+   </tr>`;
+ }).join('');
+ }catch(err){
+   document.getElementById('rows').innerHTML='<tr><td colspan="6" style="color:#b91c1c"><b>Backend is not reachable.</b> Start the server using run_windows.bat, then open http://127.0.0.1:8000/.</td></tr>';
+ }
+}
+function toggle(id){const e=document.getElementById(id);e.style.display=e.style.display==='block'?'none':'block'}
+load();
+</script></body></html>

@@ -8,9 +8,17 @@ input,button{padding:10px;border-radius:7px;border:1px solid #cbd5e1}button{back
 table{width:100%;border-collapse:collapse}td,th{padding:10px;border-bottom:1px solid #ddd;text-align:left;vertical-align:top}
 .link{word-break:break-all}.score{font-size:24px;font-weight:800}.pill{display:inline-block;padding:4px 8px;border-radius:999px;background:#eef2ff;margin:2px}
 .weak{background:#fee2e2}.good{background:#dcfce7}.muted{color:#64748b}.bar{height:8px;background:#e5e7eb;border-radius:10px;overflow:hidden}.fill{height:100%;background:#2563eb}
-.detail{display:none;margin-top:12px;padding:15px;background:#f8fafc;border-radius:10px}
+.detail{display:none;margin-top:12px;padding:15px;background:#f8fafc;border-radius:10px}.adminapp{display:none}.actions{display:flex;gap:8px;flex-wrap:wrap;align-items:center}.report-btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;background:#15803d;color:#fff;text-decoration:none;border:0;border-radius:8px;padding:12px 16px;font-weight:800;box-shadow:0 2px 5px #0002;cursor:pointer}.report-btn:hover{background:#166534}.breakdown-btn{background:#2563eb}.report-label{font-size:12px;font-weight:700;color:#166534;margin-top:6px}.login{max-width:420px;margin:80px auto}.danger{background:#dc2626}
 </style></head>
 <body>
+<div id="loginCard" class="card login">
+<h1>Admin Login</h1>
+<p class="muted">Candidate reports and assessment results are restricted to administrators.</p>
+<input id="adminPassword" type="password" placeholder="Admin password" style="width:100%;box-sizing:border-box;margin:8px 0">
+<button onclick="adminLogin()">Sign in</button>
+<div id="loginMsg" style="margin-top:10px;color:#b91c1c"></div>
+</div>
+<div id="adminApp" class="adminapp">
 <h1>Senior Python Backend Assessment — Admin</h1>
 <div class=card><h2>Create Candidate Link</h2>
 <input id=name placeholder="Candidate full name" style="width:60%"><button id="generateBtn" onclick="create()">Generate Link</button>
@@ -22,9 +30,10 @@ Password: <code id=cpw></code><br>
 Assessment Link: <code id=clink class=link></code>
 </div>
 <p class=muted>45 minutes · 100 points · 20 difficult technical questions + live coding</p></div>
-<div class=card><h2>Candidate Feedback & Results</h2><button onclick=load()>Refresh</button>
-<table><thead><tr><th>Candidate / Login ID</th><th>Score / 100</th><th>Recommendation</th><th>Weak Areas</th><th>Proctoring</th><th>Details</th></tr></thead>
+<div class=card><h2>Candidate Feedback & Results</h2><button onclick=load()>Refresh</button> <button class="danger" onclick="logout()">Logout</button>
+<table><thead><tr><th>Candidate / Login ID</th><th>Score / 100</th><th>Recommendation</th><th>Weak Areas</th><th>Proctoring</th><th>Details</th><th>Report</th></tr></thead>
 <tbody id=rows></tbody></table></div>
+</div>
 <script>
 const MAX={python:20,api:15,framework:15,sql:15,distributed:15,design:10,coding:10};
 const NAMES={python:'Python Internals & Concurrency',api:'API Architecture & Security',framework:'Django / FastAPI',sql:'Advanced SQL / Database',distributed:'Distributed Systems',design:'Senior System Design',coding:'Live Coding'};
@@ -87,14 +96,42 @@ async function load(){
    <td><b>${esc(fb.level||rec(Number(x.score||0)))}</b><br><span class=muted>${esc(fb.message||'Preliminary feedback')}</span></td>
    <td>${weak.length?weak.map(([k,m])=>`<span class="pill weak">${NAMES[k]}: ${sec[k]??0}/${m}</span>`).join('<br>'):'<span class="pill good">No major weak section</span>'}</td>
    <td>${ev.length} events<br><span class=muted>${esc(x.time_taken_seconds||0)} sec</span></td>
-   <td><button onclick="toggle('d${i}')">View breakdown</button>
+   <td><button class="breakdown-btn" onclick="toggle('d${i}')">View breakdown</button>
    <div id=d${i} class=detail>${Object.entries(MAX).map(([k,m])=>{let v=Number(sec[k]||0);return `<p><b>${NAMES[k]}</b> — ${v}/${m}</p><div class=bar><div class=fill style="width:${Math.min(100,v/m*100)}%"></div></div>`}).join('')}<hr><b>Feedback:</b><p>${esc(fb.message||'')}</p></div></td>
+   <td><a class="report-btn" href="/api/admin/session/${encodeURIComponent(x.token)}/report.pdf" target="_blank" rel="noopener">📄 DOWNLOAD PDF REPORT</a><div class="report-label">Individual candidate report</div></td>
    </tr>`;
  }).join('');
  }catch(err){
-   document.getElementById('rows').innerHTML='<tr><td colspan="6" style="color:#b91c1c"><b>Backend is not reachable.</b> Start the server using run_windows.bat, then open http://127.0.0.1:8000/.</td></tr>';
+   document.getElementById('rows').innerHTML='<tr><td colspan="7" style="color:#b91c1c"><b>Backend is not reachable.</b> Start the server using run_windows.bat, then open http://127.0.0.1:8000/.</td></tr>';
  }
 }
 function toggle(id){const e=document.getElementById(id);e.style.display=e.style.display==='block'?'none':'block'}
-load();
+</script>
+<script>
+async function adminLogin(){
+ const pw=document.getElementById('adminPassword').value;
+ const msg=document.getElementById('loginMsg');
+ msg.textContent='';
+ try{
+   const r=await fetch('/api/admin/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({password:pw})});
+   const x=await r.json().catch(()=>({}));
+   if(!r.ok) throw new Error(x.detail||'Login failed');
+   showAdmin();
+ }catch(e){msg.textContent=e.message;}
+}
+async function logout(){
+ await fetch('/api/admin/logout',{method:'POST'});
+ document.getElementById('adminApp').style.display='none';
+ document.getElementById('loginCard').style.display='block';
+}
+async function checkAdmin(){
+ try{const r=await fetch('/api/admin/auth'); if(r.ok){const x=await r.json(); if(x.authenticated){showAdmin(); return;}}}catch(e){}
+ document.getElementById('loginCard').style.display='block';
+}
+function showAdmin(){
+ document.getElementById('loginCard').style.display='none';
+ document.getElementById('adminApp').style.display='block';
+ load();
+}
+checkAdmin();
 </script></body></html>

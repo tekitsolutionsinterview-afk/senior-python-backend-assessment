@@ -1,0 +1,10 @@
+FIXED VERSION — SENIOR PYTHON BACKEND ASSESSMENT
+
+1. Upload/replace the application files in your GitHub repository.
+2. Commit to main.
+3. Wait for Render to deploy.
+4. Add DATABASE_URL in Render using the existing senior-python-backend-db connection string.
+5. Keep your old assessment.db private.
+6. Run migrate_sqlite_to_postgres.py once to restore the old local records.
+
+Do NOT upload assessment.db to the public GitHub repository.

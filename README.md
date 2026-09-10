@@ -1,43 +1,50 @@
-# Senior Python Backend Assessment Platform
+# Senior Python Backend Assessment — Fixed Render Version
 
-## Important: do not open `admin.html` directly
+This version fixes the live submission problem and adds persistent PostgreSQL support.
 
-If the browser shows **"Could not generate link: Failed to fetch"**, the most common cause is that the HTML page was opened directly (`file://...`) or the FastAPI backend is not running.
+## What was fixed
 
-### Windows — easiest method
-1. Install Python 3.10+.
-2. Double-click **`run_windows.bat`**.
-3. Keep the black terminal window open.
-4. The browser should open:
-   **http://127.0.0.1:8000/**
-5. Enter the candidate name and click **Generate Link**.
+- `/api/submit` is present and also accepts `/api/submit/`.
+- Candidate submission errors are no longer silently ignored in the browser.
+- Render can use PostgreSQL through `DATABASE_URL`.
+- Local development still works with SQLite when `DATABASE_URL` is not set.
+- Existing local `assessment.db` records can be migrated with `migrate_sqlite_to_postgres.py`.
+- `assessment.db` is excluded from Git so candidate credentials/results are not published publicly.
 
-The Generate Link button calls `/api/admin/create`, so the FastAPI server must be running.
+## Deploy to your existing Render service
 
-### Manual startup
-```bash
-python -m pip install -r requirements.txt
-python -m uvicorn app.main:app --host 127.0.0.1 --port 8000
+1. Replace the files in your GitHub repository with the files from this package.
+2. Commit to the **main** branch.
+3. Render should auto-deploy the new commit.
+4. In Render, open the web service → **Environment**.
+5. Add `DATABASE_URL` using the **Internal Database URL / connection string** for your Render PostgreSQL database. If Render offers “Add from database”, select `senior-python-backend-db` and its connection-string property.
+6. Redeploy if Render does not automatically redeploy after the environment change.
+7. Open `/health`. It should report `"database":"postgres"`.
+
+## Restore the old local records
+
+Keep your existing local `assessment.db` file. Do **not** upload it to GitHub.
+
+After obtaining the Render PostgreSQL connection string, run:
+
+```powershell
+$env:DATABASE_URL = "<your Render PostgreSQL connection string>"
+python migrate_sqlite_to_postgres.py
 ```
-Then open:
-`http://127.0.0.1:8000/`
 
-## Candidate flow
-Admin generates a candidate record and receives:
-- unique assessment URL
-- Login ID
-- Password
+The migration is idempotent and uses the candidate `token` as the conflict key, so running it again does not duplicate records.
 
-Candidate opens the assessment URL, enters the supplied credentials, grants camera access, enters fullscreen, and starts the 45-minute assessment.
+## Local run
 
-## Assessment
-- 45 minutes
-- 100 points
-- difficult Senior Python Backend questions
-- live Python coding
-- camera check-in
-- fullscreen / visibility / blur event logging
-- section-wise score and weak-area feedback in admin
+Without `DATABASE_URL`, the application automatically uses `app/assessment.db`.
 
-## Production hardening
-For internet-facing deployment, add HTTPS, admin authentication, expiring/signed candidate credentials, PostgreSQL, server-side timing, isolated code execution, stronger proctoring, audit logs, and privacy/consent controls.
+```powershell
+pip install -r requirements.txt
+uvicorn app.main:app --host 127.0.0.1 --port 8000
+```
+
+Then open `http://127.0.0.1:8000/`.
+
+## Important
+
+Do not commit `assessment.db`, `.env`, passwords, or a PostgreSQL connection string to GitHub. Candidate assessment data should remain in the database.

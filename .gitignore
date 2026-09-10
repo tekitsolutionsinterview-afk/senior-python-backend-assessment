@@ -1,0 +1,6 @@
+__pycache__/
+*.py[cod]
+assessment.db
+*.db-shm
+*.db-wal
+.env

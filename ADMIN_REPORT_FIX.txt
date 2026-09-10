@@ -1,0 +1,26 @@
+ADMIN-ONLY REPORT FIX
+
+This package adds:
+- Admin login protection for all /api/admin/* endpoints
+- HttpOnly admin session cookie
+- Candidate Report / PDF download button in the Admin Portal
+- PDF access denied to unauthenticated candidates
+- 90-100% = OUTSTANDING (green)
+- 70-89.9% = GOOD (yellow)
+- 0-69.9% = BAD (red)
+- Server-side PDF generation with score, section scores, strengths, technical gaps and hiring feedback
+
+RENDER ENVIRONMENT VARIABLES REQUIRED:
+ADMIN_PASSWORD = choose your private admin password
+ADMIN_SECRET = choose a long random secret (different from ADMIN_PASSWORD)
+
+Keep these values only in Render Environment Variables. Do NOT put them in GitHub.
+DATABASE_URL remains your existing PostgreSQL connection string.
+
+After deployment:
+1. Open the root/admin portal URL.
+2. Enter ADMIN_PASSWORD.
+3. Candidate rows will show “Download Report”.
+4. Direct PDF URLs without the admin session return 401.
+
+Do NOT upload app/assessment.db to GitHub/Render. PostgreSQL is used when DATABASE_URL is set.

@@ -1,0 +1,42 @@
+UPDATED FEATURES — SENIOR PYTHON BACKEND ASSESSMENT
+
+1. Every question is mandatory for manual submission.
+   - Q1-Q20 and the Live Coding answer must be filled before a normal Submit.
+   - At the 45-minute limit, the assessment auto-submits whatever was attempted.
+   - Unanswered questions are saved as blank and shown as NOT ATTEMPTED in the admin report.
+
+2. Server-controlled 45-minute timer.
+   - The timer starts only after the candidate clicks Start Assessment.
+   - The server records exam_started_at.
+   - Submissions are capped at 45 minutes with a small network grace period.
+   - Browser auto-submits at 00:00 and closes the assessment screen.
+   - Answers are autosaved every 15 seconds while the assessment is active.
+
+3. Live Coding is tested against the actual TTL + LRU cache question.
+   - Browser-side Pyodide executes functional tests against the candidate's code.
+   - Tests cover API, basic get/set, LRU eviction, update-as-MRU, TTL expiry,
+     zero/negative TTL, capacity behavior and a 100,000-operation stress test.
+   - Server independently analyses the submitted code for thread-safety and an
+     O(1)-style LRU structure. These are coding-question-specific checks only.
+   - Coding score is based only on the coding tests + code analysis, not on
+     whether the candidate typed a certain number of words or keywords.
+   - Candidate must run the coding tests before manual submission.
+
+4. Admin-only candidate reports.
+   - Admin login is required for all /api/admin/* endpoints.
+   - Candidate sessions cannot access admin results or PDF reports.
+   - Admin Portal has an individual Download Report button for every candidate.
+   - Reports include final score, rating, section scores, question attempt status,
+     coding test results, technical strengths, technical gaps and hiring feedback.
+
+5. Rating scale:
+   - 90–100% = OUTSTANDING (green)
+   - 70–89.9% = GOOD (yellow)
+   - 0–69.9% = BAD (red)
+
+Render environment variables required:
+   ADMIN_PASSWORD = your private admin password
+   ADMIN_SECRET   = a long random signing secret
+   DATABASE_URL   = your existing PostgreSQL internal connection URL
+
+Do not upload assessment.db to GitHub or replace the Render PostgreSQL database.

@@ -48,3 +48,7 @@ Then open `http://127.0.0.1:8000/`.
 ## Important
 
 Do not commit `assessment.db`, `.env`, passwords, or a PostgreSQL connection string to GitHub. Candidate assessment data should remain in the database.
+
+
+## Candidate PDF Feedback
+The Admin API now provides `/api/admin/session/{token}/report.pdf`, generating a PDF containing the final score, color-coded rating, section scores, technical strengths, and technical gaps.

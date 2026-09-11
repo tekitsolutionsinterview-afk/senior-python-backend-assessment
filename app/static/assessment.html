@@ -10,7 +10,7 @@ label{display:block;margin:9px 0}.timer{font-size:20px;font-weight:bold}
 textarea{width:100%;box-sizing:border-box;font-family:Consolas,monospace;padding:10px;border:1px solid #cbd5e1;border-radius:7px}
 .small{height:120px}.code{height:330px}.btn{padding:11px 18px;border:0;border-radius:8px;font-weight:bold;cursor:pointer}.primary{background:#2563eb;color:white}.danger{background:#dc2626;color:white}
 #cam{width:190px;height:140px;background:#111;object-fit:cover;border-radius:8px}.pro{display:flex;gap:18px;align-items:center}.warn{background:#fff7ed;border:1px solid #fed7aa;padding:10px;border-radius:7px}
-.badge{display:inline-block;padding:5px 9px;border-radius:999px;background:#eef2ff}.rubric{font-size:14px;color:#475569}
+.badge{display:inline-block;padding:5px 9px;border-radius:999px;background:#eef2ff}.rubric{font-size:14px;color:#475569}.required{color:#dc2626;font-weight:700;font-size:12px}.expired{background:#fef2f2;border:1px solid #fecaca;padding:12px;border-radius:8px}
 </style></head>
 <body>
 <div class=top><b>Senior Python Backend Developer Assessment</b><span id=timer>45:00</span></div>
@@ -32,41 +32,61 @@ textarea{width:100%;box-sizing:border-box;font-family:Consolas,monospace;padding
 <form id=form>
 
 <div class=card><h2>1. Python Internals & Concurrency <span class=badge>20 pts</span></h2>
-<div class=q><b>Q1. Closure + late binding.</b><pre>funcs=[]\nfor i in range(5): funcs.append(lambda: i)\nprint([f() for f in funcs])</pre><p>Give the output and rewrite it so the output is [0,1,2,3,4]. Explain why.</p><textarea class=small name=q1></textarea></div>
-<div class=q><b>Q2. Descriptors / __getattribute__.</b><p>Explain why __getattribute__ executes in the given User example, the difference from __getattr__, and what happens if __getattribute__ recursively accesses self.role.</p><textarea class=small name=q2></textarea></div>
-<div class=q><b>Q3. Async + blocking code.</b><p>A FastAPI async endpoint uses requests.get() and then generates a large CPU-heavy report. Under load latency explodes. Identify the problems and redesign it.</p><textarea class=small name=q3></textarea></div>
-<div class=q><b>Q4. Race condition.</b><p>Multiple threads call purchase() on shared inventory. Explain how overselling can occur and provide a thread-safe implementation.</p><textarea class=small name=q4></textarea></div>
-<div class=q><b>Q5. Memory investigation.</b><p>RAM grows from 300 MB to 4.8 GB over hours at constant traffic. Explain how you distinguish a Python leak, unbounded cache, retained references, connection leak, and worker issue. Name tools/techniques.</p><textarea class=small name=q5></textarea></div>
+<div class=q><b>Q1. Closure + late binding.</b><pre>funcs=[]\nfor i in range(5): funcs.append(lambda: i)\nprint([f() for f in funcs])</pre><p>Give the output and rewrite it so the output is [0,1,2,3,4]. Explain why.</p><span class="required">* Required</span>
+<textarea class=small name=q1></textarea></div>
+<div class=q><b>Q2. Descriptors / __getattribute__.</b><p>Explain why __getattribute__ executes in the given User example, the difference from __getattr__, and what happens if __getattribute__ recursively accesses self.role.</p><span class="required">* Required</span>
+<textarea class=small name=q2></textarea></div>
+<div class=q><b>Q3. Async + blocking code.</b><p>A FastAPI async endpoint uses requests.get() and then generates a large CPU-heavy report. Under load latency explodes. Identify the problems and redesign it.</p><span class="required">* Required</span>
+<textarea class=small name=q3></textarea></div>
+<div class=q><b>Q4. Race condition.</b><p>Multiple threads call purchase() on shared inventory. Explain how overselling can occur and provide a thread-safe implementation.</p><span class="required">* Required</span>
+<textarea class=small name=q4></textarea></div>
+<div class=q><b>Q5. Memory investigation.</b><p>RAM grows from 300 MB to 4.8 GB over hours at constant traffic. Explain how you distinguish a Python leak, unbounded cache, retained references, connection leak, and worker issue. Name tools/techniques.</p><span class="required">* Required</span>
+<textarea class=small name=q5></textarea></div>
 </div>
 
 <div class=card><h2>2. API Architecture & Security <span class=badge>15 pts</span></h2>
-<div class=q><b>Q6. Idempotent payment API.</b><p>POST /payments uses an Idempotency-Key. Server commits payment then crashes before responding. Client retries. Design exact safeguards against double payment.</p><textarea class=small name=q6></textarea></div>
-<div class=q><b>Q7. Distributed rate limiter.</b><p>20 API servers, 50k req/s, limit 100 requests/user/minute. Explain why an in-process counter fails and design Redis-based limiting.</p><textarea class=small name=q7></textarea></div>
-<div class=q><b>Q8. Retry disaster.</b><p>Service A calls slow Service B with 3 exponential retries. Traffic rises 5x. Explain retry storms and design safer timeout/retry/circuit-breaker behavior.</p><textarea class=small name=q8></textarea></div>
-<div class=q><b>Q9. Secure file upload.</b><p>Design a 100 MB PDF/JPEG/PNG upload API with malware protection, authz, path traversal protection, and object storage rather than app-server files.</p><textarea class=small name=q9></textarea></div>
+<div class=q><b>Q6. Idempotent payment API.</b><p>POST /payments uses an Idempotency-Key. Server commits payment then crashes before responding. Client retries. Design exact safeguards against double payment.</p><span class="required">* Required</span>
+<textarea class=small name=q6></textarea></div>
+<div class=q><b>Q7. Distributed rate limiter.</b><p>20 API servers, 50k req/s, limit 100 requests/user/minute. Explain why an in-process counter fails and design Redis-based limiting.</p><span class="required">* Required</span>
+<textarea class=small name=q7></textarea></div>
+<div class=q><b>Q8. Retry disaster.</b><p>Service A calls slow Service B with 3 exponential retries. Traffic rises 5x. Explain retry storms and design safer timeout/retry/circuit-breaker behavior.</p><span class="required">* Required</span>
+<textarea class=small name=q8></textarea></div>
+<div class=q><b>Q9. Secure file upload.</b><p>Design a 100 MB PDF/JPEG/PNG upload API with malware protection, authz, path traversal protection, and object storage rather than app-server files.</p><span class="required">* Required</span>
+<textarea class=small name=q9></textarea></div>
 </div>
 
 <div class=card><h2>3. Django / FastAPI <span class=badge>15 pts</span></h2>
-<div class=q><b>Q10. N+1 + pagination.</b><p>Given an endpoint iterating orders, order.customer.name and order.items.all() cause many queries. Redesign for 1M orders, 20 items/order, 100 req/s.</p><textarea class=small name=q10></textarea></div>
-<div class=q><b>Q11. Transaction failure.</b><p>A transaction calls payment.charge(), inventory.reduce(), and send_email(). Payment succeeds but inventory fails. Redesign using DB transaction, outbox, worker, idempotency and retries.</p><textarea class=small name=q11></textarea></div>
-<div class=q><b>Q12. Connection pool exhaustion.</b><p>Production says "connection pool exhausted / timeout waiting for connection" while CPU is normal. What causes would you investigate and how?</p><textarea class=small name=q12></textarea></div>
-<div class=q><b>Q13. Async database trap.</b><p>Why doesn't changing a FastAPI endpoint to async automatically make synchronous ORM/database calls non-blocking?</p><textarea class=small name=q13></textarea></div>
+<div class=q><b>Q10. N+1 + pagination.</b><p>Given an endpoint iterating orders, order.customer.name and order.items.all() cause many queries. Redesign for 1M orders, 20 items/order, 100 req/s.</p><span class="required">* Required</span>
+<textarea class=small name=q10></textarea></div>
+<div class=q><b>Q11. Transaction failure.</b><p>A transaction calls payment.charge(), inventory.reduce(), and send_email(). Payment succeeds but inventory fails. Redesign using DB transaction, outbox, worker, idempotency and retries.</p><span class="required">* Required</span>
+<textarea class=small name=q11></textarea></div>
+<div class=q><b>Q12. Connection pool exhaustion.</b><p>Production says "connection pool exhausted / timeout waiting for connection" while CPU is normal. What causes would you investigate and how?</p><span class="required">* Required</span>
+<textarea class=small name=q12></textarea></div>
+<div class=q><b>Q13. Async database trap.</b><p>Why doesn't changing a FastAPI endpoint to async automatically make synchronous ORM/database calls non-blocking?</p><span class="required">* Required</span>
+<textarea class=small name=q13></textarea></div>
 </div>
 
 <div class=card><h2>4. Advanced SQL / Database <span class=badge>15 pts</span></h2>
-<div class=q><b>Q14. Top 3 salaries per department including ties.</b><p>Tables: employees(id,name,department_id,salary). Write SQL using a window function.</p><textarea class=small name=q14></textarea></div>
-<div class=q><b>Q15. Missing events.</b><p>Given user_events(user_id,event_time,event_type), find users who logged in but did not purchase within 24 hours.</p><textarea class=small name=q15></textarea></div>
-<div class=q><b>Q16. Production query investigation.</b><pre>SELECT * FROM orders WHERE customer_id=123 AND status='PENDING' ORDER BY created_at DESC LIMIT 50;</pre><p>There are 500M rows and the query takes 7 seconds. Explain investigation and indexing/planner strategy.</p><textarea class=small name=q16></textarea></div>
+<div class=q><b>Q14. Top 3 salaries per department including ties.</b><p>Tables: employees(id,name,department_id,salary). Write SQL using a window function.</p><span class="required">* Required</span>
+<textarea class=small name=q14></textarea></div>
+<div class=q><b>Q15. Missing events.</b><p>Given user_events(user_id,event_time,event_type), find users who logged in but did not purchase within 24 hours.</p><span class="required">* Required</span>
+<textarea class=small name=q15></textarea></div>
+<div class=q><b>Q16. Production query investigation.</b><pre>SELECT * FROM orders WHERE customer_id=123 AND status='PENDING' ORDER BY created_at DESC LIMIT 50;</pre><p>There are 500M rows and the query takes 7 seconds. Explain investigation and indexing/planner strategy.</p><span class="required">* Required</span>
+<textarea class=small name=q16></textarea></div>
 </div>
 
 <div class=card><h2>5. Distributed Systems <span class=badge>15 pts</span></h2>
-<div class=q><b>Q17. Exactly-once processing.</b><p>A Kafka consumer updates PostgreSQL then commits the offset, but can crash between either operation. Explain loss/duplication and design an idempotent consumer.</p><textarea class=small name=q17></textarea></div>
-<div class=q><b>Q18. Distributed lock.</b><p>20 workers must ensure only one processes invoice 123. Design a Redis lock and handle worker crash, TTL, ownership, renewal and fencing concerns.</p><textarea class=small name=q18></textarea></div>
-<div class=q><b>Q19. Cache stampede.</b><p>100,000 requests arrive exactly when a product cache expires. PostgreSQL collapses. Design protections.</p><textarea class=small name=q19></textarea></div>
+<div class=q><b>Q17. Exactly-once processing.</b><p>A Kafka consumer updates PostgreSQL then commits the offset, but can crash between either operation. Explain loss/duplication and design an idempotent consumer.</p><span class="required">* Required</span>
+<textarea class=small name=q17></textarea></div>
+<div class=q><b>Q18. Distributed lock.</b><p>20 workers must ensure only one processes invoice 123. Design a Redis lock and handle worker crash, TTL, ownership, renewal and fencing concerns.</p><span class="required">* Required</span>
+<textarea class=small name=q18></textarea></div>
+<div class=q><b>Q19. Cache stampede.</b><p>100,000 requests arrive exactly when a product cache expires. PostgreSQL collapses. Design protections.</p><span class="required">* Required</span>
+<textarea class=small name=q19></textarea></div>
 </div>
 
 <div class=card><h2>6. Senior System Design <span class=badge>10 pts</span></h2>
-<div class=q><b>Q20. Design a job processing platform.</b><p>10M jobs/day, 10ms–30min jobs, 5 retries, priority queues, scheduled jobs, duplicate prevention, status, cancellation, and workers that can crash. Explain API, DB, queue, workers, result store, retry/DLQ, idempotency, heartbeats, visibility timeout, monitoring and scaling.</p><textarea class=small name=q20></textarea></div>
+<div class=q><b>Q20. Design a job processing platform.</b><p>10M jobs/day, 10ms–30min jobs, 5 retries, priority queues, scheduled jobs, duplicate prevention, status, cancellation, and workers that can crash. Explain API, DB, queue, workers, result store, retry/DLQ, idempotency, heartbeats, visibility timeout, monitoring and scaling.</p><span class="required">* Required</span>
+<textarea class=small name=q20></textarea></div>
 </div>
 
 <div class=card><h2>7. Live Coding <span class=badge>10 pts</span></h2>
@@ -76,7 +96,7 @@ textarea{width:100%;box-sizing:border-box;font-family:Consolas,monospace;padding
     def get(self, key): pass
     def set(self, key, value, ttl_seconds): pass</pre>
 <p>Requirements: LRU eviction, TTL expiry, thread safety, O(1) average get/set. Explain handling of zero/negative TTL and concurrent readers/writers. Hidden tests will include 100k operations, updates, eviction, expiry and concurrency.</p>
-<textarea id=code class=code placeholder="Write your solution here..."></textarea>
+<span class="required">* Required</span><textarea id=code class=code placeholder="Write your solution here..."></textarea>
 <button type=button class="btn primary" onclick=runCode()>Run Python Smoke Test</button>
 <pre id=output>Runtime output appears here.</pre>
 </div>
@@ -87,7 +107,9 @@ textarea{width:100%;box-sizing:border-box;font-family:Consolas,monospace;padding
 
 <script src="https://cdn.jsdelivr.net/pyodide/v0.27.7/full/pyodide.js"></script>
 <script>
-let token=location.pathname.split('/').pop(),startAt=null,events=[],submitted=false,py=null,loggedIn=false;
+let token=location.pathname.split('/').pop(),startAt=null,events=[],submitted=false,py=null,loggedIn=false,examStartedAt=null,codingResults={};
+const EXAM_SECONDS=2700;
+const CODE_TEST_NAMES=['api','basic_get_set','lru_eviction','update_mru','ttl_expiry','zero_negative_ttl','capacity_one','stress_100k'];
 function log(type){events.push({type,at:new Date().toISOString()});document.getElementById('events').textContent='Proctoring events: '+events.length}
 document.addEventListener('visibilitychange',()=>{if(startAt&&!submitted&&document.hidden)log('visibility_hidden')});
 window.addEventListener('blur',()=>{if(startAt&&!submitted)log('window_blur')});
@@ -98,97 +120,123 @@ async function candidateLogin(){
  const password=document.getElementById('loginpw').value;
  if(!login_id||!password){document.getElementById('loginerr').textContent='Enter both credentials.';return}
  try{
-  const r=await fetch('/api/candidate/login',{method:'POST',headers:{'Content-Type':'application/json'},
-   body:JSON.stringify({token,login_id,password})});
-  const x=await r.json();
-  if(!r.ok) throw new Error(x.detail||'Login failed');
-  loggedIn=true;
-  document.getElementById('login').style.display='none';
-  document.getElementById('start').style.display='block';
-  document.getElementById('candidate').value=x.candidate;
+  const r=await fetch('/api/candidate/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({token,login_id,password})});
+  const x=await r.json(); if(!r.ok) throw new Error(x.detail||'Login failed');
+  loggedIn=true; document.getElementById('login').style.display='none'; document.getElementById('start').style.display='block'; document.getElementById('candidate').value=x.candidate;
  }catch(e){document.getElementById('loginerr').textContent=e.message}
 }
 async function startExam(){
  if(!loggedIn)return alert('Please login first.');
  const n=document.getElementById('candidate').value.trim(); if(!n)return alert('Enter your name');
  try{const s=await navigator.mediaDevices.getUserMedia({video:true,audio:false});document.getElementById('cam').srcObject=s;document.getElementById('camstat').textContent='Camera: ON'}catch(e){return alert('Camera access is required.')}
+ try{
+   const r=await fetch('/api/candidate/start/'+encodeURIComponent(token),{method:'POST'}); const x=await r.json();
+   if(!r.ok) throw new Error(x.detail||'Could not start assessment');
+   examStartedAt=new Date(x.exam_started_at).getTime(); startAt=examStartedAt;
+ }catch(e){return alert(e.message)}
  document.getElementById('start').style.display='none';document.getElementById('exam').style.display='block';
  try{await document.documentElement.requestFullscreen()}catch(e){log('fullscreen_request_failed')}
- startAt=Date.now();log('assessment_started');setInterval(tick,1000);
+ log('assessment_started'); tick(); setInterval(tick,1000); setInterval(autoSave,15000);
 }
-function tick(){if(!startAt||submitted)return;let left=2700-Math.floor((Date.now()-startAt)/1000);if(left<=0){submitExam(true);return}document.getElementById('timer').textContent=String(Math.floor(left/60)).padStart(2,'0')+':'+String(left%60).padStart(2,'0')}
+function tick(){
+ if(!startAt||submitted)return;
+ const elapsed=Math.floor((Date.now()-startAt)/1000),left=EXAM_SECONDS-elapsed;
+ if(left<=0){document.getElementById('timer').textContent='00:00';submitExam(true);return}
+ document.getElementById('timer').textContent=String(Math.floor(left/60)).padStart(2,'0')+':'+String(left%60).padStart(2,'0');
+}
+function collectAnswers(){const a={};document.querySelectorAll('textarea[name]').forEach(e=>a[e.name]=e.value);return a;}
+function unanswered(){
+ const a=collectAnswers(), missing=[];
+ for(let i=1;i<=20;i++) if(!String(a['q'+i]||'').trim()) missing.push('Q'+i);
+ if(!document.getElementById('code').value.trim()) missing.push('Coding');
+ return missing;
+}
+
 async function runCode(){
- let out=document.getElementById('output');out.textContent='Loading Python runtime…';
+ let out=document.getElementById('output'); out.textContent='Loading Python runtime and running tests…'; codingResults={};
  try{
-   if(!py)py=await loadPyodide();
-   let c=document.getElementById('code').value;
-   py.setStdout({batched:x=>out.textContent=x});
-   await py.runPythonAsync(c+`
-import time, threading
+  if(!py)py=await loadPyodide();
+  const c=document.getElementById('code').value;
+  if(!c.trim()){out.textContent='Enter code first.';return}
+  const escaped=JSON.stringify(c);
+  const runner=`
+import json, time, ast, traceback
+code=${escaped}
+results={}
+static_results={}
 try:
-    cache=TTLCache(2)
-    cache.set("a",1,10); cache.set("b",2,10)
-    assert cache.get("a")==1
-    cache.set("c",3,10)
-    assert cache.get("b") is None
-    cache.set("x",9,0)
-    assert cache.get("x") is None
-    print("Smoke test passed")
+    tree=ast.parse(code)
+    text=code.lower()
+    static_results['static_thread_safety']=('threading.lock' in text or 'threading.rlock' in text or 'rlock(' in text or 'lock(' in text)
+    static_results['static_o1_lru']=('ordereddict' in text and 'move_to_end' in text) or ('ordered_dict' in text) 
+except Exception:
+    static_results['static_thread_safety']=False
+    static_results['static_o1_lru']=False
+try:
+    ns={}
+    exec(compile(code,'candidate.py','exec'),ns,ns)
+    results['api']=('TTLCache' in ns and callable(ns.get('TTLCache')) and all(hasattr(ns['TTLCache'],m) for m in ('get','set')))
+    if results['api']:
+        Cache=ns['TTLCache']
+        try:
+            cache=Cache(2); cache.set('a',1,10); cache.set('b',2,10); results['basic_get_set']=(cache.get('a')==1 and cache.get('b')==2)
+        except Exception: results['basic_get_set']=False
+        try:
+            cache=Cache(2); cache.set('a',1,10); cache.set('b',2,10); cache.get('a'); cache.set('c',3,10); results['lru_eviction']=(cache.get('b') is None and cache.get('a')==1 and cache.get('c')==3)
+        except Exception: results['lru_eviction']=False
+        try:
+            cache=Cache(2); cache.set('a',1,10); cache.set('b',2,10); cache.get('a'); cache.set('a',9,10); cache.set('c',3,10); results['update_mru']=(cache.get('a')==9 and cache.get('b') is None)
+        except Exception: results['update_mru']=False
+        try:
+            cache=Cache(2); cache.set('a',1,0.03); time.sleep(0.08); results['ttl_expiry']=(cache.get('a') is None)
+        except Exception: results['ttl_expiry']=False
+        try:
+            cache=Cache(2); cache.set('z',1,0); results['zero_negative_ttl']=(cache.get('z') is None); cache.set('n',2,-1); results['zero_negative_ttl']=results['zero_negative_ttl'] and cache.get('n') is None
+        except Exception: results['zero_negative_ttl']=False
+        try:
+            cache=Cache(1); cache.set('a',1,10); cache.set('b',2,10); results['capacity_one']=(cache.get('a') is None and cache.get('b')==2)
+        except Exception: results['capacity_one']=False
+        try:
+            cache=Cache(2); cache.set('seed',0,1000)
+            ok=True
+            for i in range(100000):
+                k='k'+str(i%32); cache.set(k,i,1000); _=cache.get(k)
+            results['stress_100k']=ok
+        except Exception: results['stress_100k']=False
+    else:
+        for k in ['basic_get_set','lru_eviction','update_mru','ttl_expiry','zero_negative_ttl','capacity_one','stress_100k']: results[k]=False
 except Exception as e:
-    print("Smoke test failed:", repr(e))`);
- }catch(e){out.textContent='Error: '+e}
+    results['api']=False
+    for k in ['basic_get_set','lru_eviction','update_mru','ttl_expiry','zero_negative_ttl','capacity_one','stress_100k']: results[k]=False
+results.update(static_results)
+print(json.dumps(results))
+`;
+  let raw='';py.setStdout({batched:x=>raw+=x});await py.runPythonAsync(runner);codingResults=JSON.parse(raw.trim().split(/\n/).pop());
+  const functional=CODE_TEST_NAMES.filter(k=>codingResults[k]).length, stat=(codingResults.static_thread_safety?1:0)+(codingResults.static_o1_lru?1:0);
+  out.textContent='Coding tests: '+functional+'/'+CODE_TEST_NAMES.length+' passed; code analysis: '+stat+'/2 requirements detected.\n'+(functional===CODE_TEST_NAMES.length?'All functional tests passed.':'Some functional tests failed.')+'\n'+JSON.stringify(codingResults,null,2);
+ }catch(e){codingResults={};out.textContent='Code test error: '+e;}
 }
-function collectAnswers(){
- const a={};
- document.querySelectorAll('textarea[name]').forEach(e=>a[e.name]=e.value);
- return a;
+async function autoSave(){
+ if(!startAt||submitted)return;
+ try{await fetch('/api/autosave',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({token,candidate:document.getElementById('candidate').value,answers:collectAnswers(),sql:document.querySelector('[name=q14]').value,code:document.getElementById('code').value,events,coding_tests:codingResults})});}catch(e){}
 }
-function scoreSections(){
- const a=collectAnswers();
- // The difficult short-answer sections require reviewer scoring.
- // Objective pre-score rewards completeness only; admin uses section labels + manual score.
- const words=s=>s.trim().split(/\s+/).filter(Boolean).length;
- const completeness = keys => {
-   let n=0; keys.forEach(k=>{if(words(a[k]||'')>=12)n++;}); return n/keys.length;
- };
- return {
-   python: Math.round(20*completeness(['q1','q2','q3','q4','q5'])),
-   api: Math.round(15*completeness(['q6','q7','q8','q9'])),
-   framework: Math.round(15*completeness(['q10','q11','q12','q13'])),
-   sql: Math.round(15*completeness(['q14','q15','q16'])),
-   distributed: Math.round(15*completeness(['q17','q18','q19'])),
-   design: Math.round(10*completeness(['q20'])),
-   coding: document.getElementById('code').value.trim()?10:0
- };
-}
-function feedbackFor(sec){
- const bands={python:'Python internals, async/concurrency, race conditions and memory profiling',
- api:'API reliability, security, idempotency, rate limiting and retry design',
- framework:'Django/FastAPI ORM optimization, transactions, async boundaries and DB pooling',
- sql:'Advanced SQL, window functions, query plans, indexing and database reasoning',
- distributed:'Kafka/Redis semantics, idempotency, distributed locks and cache stampede prevention',
- design:'End-to-end job architecture, failure handling, queues, workers and scalability',
- coding:'Data structures, concurrency, TTL/LRU correctness and algorithmic complexity'};
- let max=0;for(const [k,v] of Object.entries(sec))if(v>max)max=v;
- let weak=Object.entries(sec).filter(([k,v])=>v < SECT_MAX[k]*0.6).map(([k])=>bands[k]);
- return {weak,max, bands};
-}
-const SECT_MAX={python:20,api:15,framework:15,sql:15,distributed:15,design:10,coding:10};
+function scoreSections(){return {};}
 function buildFeedback(sec,total){
  const names={python:'Python internals & concurrency',api:'API architecture & security',framework:'Django/FastAPI',sql:'Advanced SQL & databases',distributed:'Distributed systems',design:'System design',coding:'Live coding'};
- const weak=Object.entries(sec).filter(([k,v])=>v < SECT_MAX[k]*0.6).sort((a,b)=>a[1]-b[1]);
- let level=total>=90?'Strong Hire':total>=80?'Hire':total>=70?'Consider / Technical Discussion':total>=60?'Weak':'Reject';
- let msg=`Overall: ${level}. `;
- if(!weak.length) msg+='No major weak section was detected from the preliminary scoring; review depth and correctness manually.';
- else msg+='Main areas needing improvement: '+weak.map(([k,v])=>`${names[k]} (${v}/${SECT_MAX[k]})`).join(', ')+'.';
- return {level,message:msg,weak};
+ const weak=Object.entries(sec).filter(([k,v])=>v < ({python:20,api:15,framework:15,sql:15,distributed:15,design:10,coding:10}[k]*.6)).sort((a,b)=>a[1]-b[1]);
+ const level=total>=90?'Strong Hire':total>=80?'Hire':total>=70?'Consider / Technical Discussion':total>=60?'Weak':'Reject';
+ return {level,message:'Overall: '+level+'. '+(weak.length?'Main areas needing improvement: '+weak.map(([k,v])=>names[k]+' ('+v+')').join(', ')+'.':'No major weak section detected by the automated rubric; manually review answers and code.'),weak};
 }
 async function submitExam(auto=false){
- if(submitted)return;submitted=true;log(auto?'time_expired':'submitted');
- const sec=scoreSections(), total=Object.values(sec).reduce((a,b)=>a+b,0), fb=buildFeedback(sec,total);
- const payload={token,candidate:document.getElementById('candidate').value,answers:collectAnswers(),sql:document.querySelector('[name=q14]').value,code:document.getElementById('code').value,events,score:total,section_scores:sec,feedback:JSON.stringify(fb),time_taken_seconds:Math.floor((Date.now()-startAt)/1000)};
- try{await fetch('/api/submit',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)})}catch(e){}
- document.getElementById('exam').style.display='none';document.getElementById('done').style.display='block';
- document.getElementById('done').innerHTML='<h2>Assessment Submitted</h2><p>Your assessment has been recorded for review.</p>';
+ if(submitted)return;
+ if(!auto){const missing=unanswered();if(missing.length){alert('Every question is mandatory. Please answer: '+missing.join(', '));return;} if(!Object.keys(codingResults).length){alert('Please run the Python coding tests before submitting.');return;}}
+ submitted=true; log(auto?'time_expired':'submitted');
+ if(auto){document.getElementById('done').innerHTML='<div class="expired"><b>Time is over.</b> Your assessment is being submitted automatically. Unattempted questions will be marked as NOT ATTEMPTED.</div>';document.getElementById('done').style.display='block';}
+ const payload={token,candidate:document.getElementById('candidate').value,answers:collectAnswers(),sql:document.querySelector('[name=q14]').value,code:document.getElementById('code').value,events,coding_tests:codingResults,time_taken_seconds:Math.min(EXAM_SECONDS,Math.max(0,Math.floor((Date.now()-startAt)/1000)))};
+ try{
+  const r=await fetch('/api/submit',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)}); const x=await r.json().catch(()=>({}));
+  if(!r.ok)throw new Error(x.detail||('HTTP '+r.status));
+  document.getElementById('exam').style.display='none';document.getElementById('done').style.display='block';document.getElementById('done').innerHTML='<h2>Assessment Submitted</h2><p>Your assessment has been recorded for review.</p>'+(auto?'<p class="expired">The 45-minute limit was reached. Any unanswered question is marked <b>NOT ATTEMPTED</b>.</p>':'');
+ }catch(e){submitted=false;document.getElementById('done').style.display='block';document.getElementById('done').innerHTML='<h2 style="color:#dc2626">Submission could not be saved</h2><p>'+String(e.message).replace(/[&<>]/g,'')+'</p><p>Please contact the administrator before closing this page.</p>';}
 }
-</script></body></html>
+</script></script></body></html>

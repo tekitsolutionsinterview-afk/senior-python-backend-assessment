@@ -1,0 +1,27 @@
+DEPLOYMENT-READY PACKAGE
+
+IMPORTANT: Preserve these exact paths when uploading to GitHub.
+
+Required application files:
+  app/main.py
+  app/static/admin.html
+  app/static/assessment.html
+  requirements.txt
+  Dockerfile
+  runtime.txt
+
+Do NOT upload these files as root-level replacements:
+  main.py
+  admin.html
+  assessment.html
+
+Render start command:
+  uvicorn app.main:app --host 0.0.0.0 --port $PORT
+
+Render Environment Variables:
+  DATABASE_URL = your existing Render PostgreSQL DATABASE_URL
+  ADMIN_PASSWORD = choose your admin password (do not send it in chat)
+  ADMIN_SECRET = generate a long random secret (do not send it in chat)
+
+After committing these files to the repository's main branch, wait for Render to finish the deployment.
+Then open /admin and log in with ADMIN_PASSWORD.
